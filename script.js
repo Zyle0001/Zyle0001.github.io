@@ -1,4 +1,4 @@
-const username = "YOUR_GITHUB_USERNAME";
+const username = "Zyle0001";
 
 fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`)
   .then(res => res.json())
