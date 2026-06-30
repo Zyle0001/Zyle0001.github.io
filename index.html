@@ -9,26 +9,38 @@
 </head>
 <body>
 
-    <div class="container">
+    <div class="page-shell">
+        <div class="container">
 
-        <header>
-            <h1>Declan Waters</h1>
-            <p>
-                Software Development • AI Systems • Creative Technology • Engineering Projects
-            </p>
-        </header>
+            <header class="hero">
+                <p class="eyebrow">GitHub Portfolio</p>
+                <h1>Declan Waters</h1>
+                <p class="hero-copy">
+                    Building practical AI tools, creative engineering projects, and small experiments that turn ideas into usable software.
+                </p>
+                <div class="hero-actions" aria-label="Portfolio highlights">
+                    <span>AI Systems</span>
+                    <span>Python Tools</span>
+                    <span>Creative Technology</span>
+                </div>
+            </header>
 
-        <main>
-            <section>
-                <h2>Projects</h2>
-                <div id="repos"></div>
-            </section>
-        </main>
+            <main>
+                <section class="projects-panel">
+                    <div class="section-heading">
+                        <p class="eyebrow">Featured work</p>
+                        <h2>Current repositories</h2>
+                        <p>Hand-picked projects first, followed by active public repositories from GitHub.</p>
+                    </div>
+                    <div id="repos" aria-live="polite"></div>
+                </section>
+            </main>
 
-        <footer>
-            © 2026 Zyle
-        </footer>
+            <footer>
+                © 2026 Zyle
+            </footer>
 
+        </div>
     </div>
 
     <script src="script.js"></script>
