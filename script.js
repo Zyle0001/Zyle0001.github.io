@@ -1,19 +1,19 @@
 const username = "Zyle0001";
-const excludedRepos = new Set(["Zyle0001.github.io"]);
+const excludedRepos = new Set(["zyle0001.github.io"]);
 const featuredRepos = [
   {
     name: "SynthSmith-Lab",
     html_url: "https://github.com/Zyle0001/SynthSmith-Lab",
-    description: "A highlighted portfolio project from my current GitHub work.",
-    language: "Repository",
+    description: "RenderBot, director tooling, trainer skeletons, and internal docs for synthesizer-inspired AI experiments.",
+    language: "Python",
     stargazers_count: 0,
     featured: true,
   },
   {
     name: "Tiny-Minds",
     html_url: "https://github.com/Zyle0001/Tiny-Minds",
-    description: "A highlighted portfolio project from my current GitHub work.",
-    language: "Repository",
+    description: "Small, interpretable neural modules that explore perception, regulation, memory, agency, and other cognition primitives.",
+    language: "Python",
     stargazers_count: 0,
     featured: true,
   },
@@ -22,26 +22,34 @@ const featuredRepos = [
 const container = document.getElementById("repos");
 
 function normaliseRepo(repo) {
-  const featured = featuredRepos.find(item => item.name === repo.name);
+  const featured = featuredRepos.find(item => item.name.toLowerCase() === repo.name.toLowerCase());
 
   return {
     ...repo,
     description: repo.description || featured?.description || "Project details coming soon.",
     language: repo.language || featured?.language || "Various",
     featured: Boolean(featured),
+    sortDate: repo.pushed_at || repo.updated_at || "",
   };
 }
 
 function mergeRepos(repos) {
   const repoMap = new Map();
 
-  featuredRepos.forEach(repo => repoMap.set(repo.name, repo));
+  featuredRepos.forEach(repo => repoMap.set(repo.name.toLowerCase(), repo));
 
   repos
-    .filter(repo => !repo.fork && !excludedRepos.has(repo.name))
-    .forEach(repo => repoMap.set(repo.name, normaliseRepo(repo)));
+    .filter(repo => !repo.fork && !excludedRepos.has(repo.name.toLowerCase()))
+    .map(normaliseRepo)
+    .forEach(repo => repoMap.set(repo.name.toLowerCase(), repo));
 
-  return [...repoMap.values()].sort((a, b) => Number(b.featured) - Number(a.featured));
+  return [...repoMap.values()].sort((a, b) => {
+    if (a.featured !== b.featured) {
+      return Number(b.featured) - Number(a.featured);
+    }
+
+    return new Date(b.sortDate || 0) - new Date(a.sortDate || 0);
+  });
 }
 
 function renderRepos(repos) {
@@ -53,16 +61,21 @@ function renderRepos(repos) {
     card.className = `repo-card${repo.featured ? " repo-card--featured" : ""}`;
     card.target = "_blank";
     card.rel = "noopener noreferrer";
+    card.setAttribute("aria-label", `Open ${repo.name} on GitHub`);
+
+    const cardTop = document.createElement("div");
+    cardTop.className = "repo-card__top";
+
+    const title = document.createElement("h3");
+    title.textContent = repo.name;
+    cardTop.appendChild(title);
 
     if (repo.featured) {
       const badge = document.createElement("span");
       badge.className = "repo-badge";
       badge.textContent = "Featured";
-      card.appendChild(badge);
+      cardTop.appendChild(badge);
     }
-
-    const title = document.createElement("h3");
-    title.textContent = repo.name;
 
     const description = document.createElement("p");
     description.textContent = repo.description;
@@ -70,7 +83,11 @@ function renderRepos(repos) {
     const meta = document.createElement("small");
     meta.textContent = `${repo.language} · ⭐ ${repo.stargazers_count ?? 0}`;
 
-    card.append(title, description, meta);
+    const cta = document.createElement("span");
+    cta.className = "repo-cta";
+    cta.textContent = "View repository →";
+
+    card.append(cardTop, description, meta, cta);
     container.appendChild(card);
   });
 }
